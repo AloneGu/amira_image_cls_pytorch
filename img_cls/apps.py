@@ -8,7 +8,7 @@
 """
 
 import flask
-from .util import getenv
+from .utils import getenv
 
 # init
 app = flask.Flask(__name__)

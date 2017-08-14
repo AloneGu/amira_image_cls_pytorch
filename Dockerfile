@@ -25,8 +25,9 @@ WORKDIR /app
 # install python lib
 RUN pip3 install --no-cache-dir -i https://pypi.doubanio.com/simple --extra-index-url https://pypi.gizwits.com:1443/root/gizwits -r requirments.txt
 
-RUN pip3 install http://download.pytorch.org/whl/cu75/torch-0.2.0.post1-cp35-cp35m-manylinux1_x86_64.whl
-RUN pip3 install torchvision
+# use 0.1.12 version
+RUN pip3 install http://download.pytorch.org/whl/cu75/torch-0.1.12.post2-cp35-cp35m-linux_x86_64.whl  -i https://pypi.doubanio.com/simple
+RUN pip3 install torchvision -i https://pypi.doubanio.com/simple
 
 RUN mkdir -p /data/log && \
     rm -rf /tmp/* ~/.cache

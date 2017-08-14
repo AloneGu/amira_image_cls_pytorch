@@ -3,16 +3,14 @@
 
 """
 @author: Jackling Gu
-@file: util.py
+@file: utils.py
 @time: 2017-06-13 09:30
 """
 
 import os
 import ast
-import glob
-from scipy.misc import imread, imresize
-import numpy as np
-from sklearn.utils import shuffle
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
 
 
 # function to get os
@@ -41,26 +39,18 @@ def get_abspath(filename):
     return os.path.normpath(os.path.join(__file__, os.path.pardir, filename))
 
 
-def data_load(data_dir_path, img_height, img_width):
+def data_load(data_dir_path, img_size):
     """
 
     :param data_dir_path: data home dir
-    :return: x, y    x is image content, y is category name
+    :return: data_loader and data_set
     """
     data_dir = get_abspath(data_dir_path)
-    subdirs = [os.path.join(data_dir, x) for x in os.listdir(data_dir)]
-    x, y = [], []
-    for cls in subdirs:
-        imgs = glob.glob(os.path.join(cls, '*'))
-        tmp_y = os.path.split(cls)[-1]
-        for img_path in imgs:
-            tmp_img = imresize(imread(img_path), (img_height, img_width))
-            x.append(np.transpose(tmp_img, (2, 1, 0)))
-            y.append(tmp_y)
-    return shuffle(np.array(x), y)
-
-
-def get_y_labels(data_dir_path):
-    data_dir = get_abspath(data_dir_path)
-    y_labels = os.listdir(data_dir)
-    return y_labels
+    data_transform = transforms.Compose(
+        [transforms.Scale(size=(img_size, img_size)),
+         transforms.RandomHorizontalFlip(),
+         transforms.ToTensor()]
+    )
+    d_set = datasets.ImageFolder(root=data_dir, transform=data_transform)
+    d_loader = DataLoader(dataset=d_set, batch_size=16, shuffle=True)
+    return d_loader, d_set
