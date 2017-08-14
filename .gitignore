@@ -1,5 +1,6 @@
 .idea/
 data/hive_bk
+models/*.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

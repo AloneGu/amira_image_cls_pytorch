@@ -75,11 +75,11 @@ class ImageClassification(object):
                 print('UNSUPPORTED NET')
                 sys.exit()
 
-        # prepare param and train net work
-        self.default_lr = 0.01
-        self.criterion = torch.nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.default_lr, momentum=0.9, weight_decay=5e-4)
-        self.train_nn()
+            # prepare param and train net work
+            self.default_lr = 0.01
+            self.criterion = torch.nn.CrossEntropyLoss()
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.default_lr, momentum=0.9, weight_decay=5e-4)
+            self.train_nn()
 
         # save model
         torch.save(self.model, self.model_save_path)
@@ -99,7 +99,7 @@ class ImageClassification(object):
     def run(self, img_file_path):
         # http://blog.outcome.io/pytorch-quick-start-classifying-an-image/
         preprocess = transforms.Compose([
-            transforms.Scale((self.img_w,self.img_w)),
+            transforms.Scale((self.img_w, self.img_w)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -110,5 +110,7 @@ class ImageClassification(object):
         img_tensor.unsqueeze_(0)
         img_variable = torch.autograd.Variable(img_tensor)
         model_out = self.model(img_variable)
-        print('MODEL OUT')
-        print('LABEL', self.d_set.classes[model_out.data.numpy().argmax()])
+        print('MODEL OUT', model_out)
+        label_res = self.d_set.classes[model_out.data.numpy().argmax()]
+        print('LABEL', label_res)
+        return {"type": label_res, "prediction": list(model_out.data.numpy()[0])}
