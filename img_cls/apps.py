@@ -28,7 +28,7 @@ def setcfg(name, default=''):
 
 setcfg('IMG_WIDTH', 224)
 setcfg('IMG_HEIGHT', 224)
-setcfg('MODEL_NAME', "ALEXNET")
+setcfg('MODEL_NAME', "LENET")
 setcfg('EPOCH', 5)
 setcfg('DATA_DIR', '../data/hive_bk')
 
