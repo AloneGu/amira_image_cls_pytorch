@@ -9,39 +9,21 @@
 """
 import torch
 import time
-
-
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
+import numpy as np
 
 
 def train(train_loader, model, criterion, optimizer, epoch):
-    batch_time = AverageMeter()
-    data_time = AverageMeter()
+    # cal time
+    start_t = time.time()
 
     # switch to train mode
     model.train()
+    loss_list = []
+    correct = 0
+    total = 0
 
     end = time.time()
     for i, (input, target) in enumerate(train_loader):
-        # measure data loading time
-        data_time.update(time.time() - end)
-
         # data
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
@@ -49,12 +31,20 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # compute output
         output = model(input_var)
         loss = criterion(output, target_var)
+        loss_list.append(loss.data[0])
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
+        # acc
+        test_output = model(input_var)
+        _, predicted = torch.max(test_output.data, 1)
+        total += target_var.size(0)
+        correct += predicted.eq(target_var.data).cpu().sum()
+
         # measure elapsed time
-        batch_time.update(time.time() - end)
         end = time.time()
+
+    print('epoch', epoch, 'loss', np.mean(loss_list), 'acc', correct / total, 'time cost', end - start_t)

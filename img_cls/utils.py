@@ -47,10 +47,14 @@ def data_load(data_dir_path, img_size):
     """
     data_dir = get_abspath(data_dir_path)
     data_transform = transforms.Compose(
-        [transforms.Scale(size=(img_size, img_size)),
-         transforms.RandomHorizontalFlip(),
-         transforms.ToTensor()]
+        [
+            transforms.Scale(size=(img_size, img_size)),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ]
     )
     d_set = datasets.ImageFolder(root=data_dir, transform=data_transform)
-    d_loader = DataLoader(dataset=d_set, batch_size=16, shuffle=True)
+    d_loader = DataLoader(dataset=d_set, batch_size=32, shuffle=True)
     return d_loader, d_set
